@@ -3,7 +3,7 @@
  * Author: Lettle
  * Date: 2024/2/17
  * Time: 16:02
- * Description:
+ * Description: 图书馆类, 描述该图书馆每层座位情况, 预计直接储存在内存中, 用于 WebSocket 实时修改
  */
 
 package cn.lettle.pubresource.entity;
