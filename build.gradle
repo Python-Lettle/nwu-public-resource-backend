@@ -18,23 +18,24 @@ repositories {
 
 dependencies {
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '3.2.2'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.6.1'
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-thymeleaf
 //	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '3.2.2'
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-websocket
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '3.2.2'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '2.6.1'
 
 	// https://mvnrepository.com/artifact/com.alibaba.fastjson2/fastjson2
 	implementation group: 'com.alibaba.fastjson2', name: 'fastjson2', version: '2.0.46'
-	// https://mvnrepository.com/artifact/javax.websocket/javax.websocket-api
-	// implementation group: 'javax.websocket', name: 'javax.websocket-api', version: '1.1'
 
 	// https://mvnrepository.com/artifact/org.projectlombok/lombok
 	implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.30'
 
 	// Mybatis Plus
-	// Gradle Version:>=4.1 (The function compile has been deprecated since Gradle 4.10, and removed since Gradle 7.0. Please use implementation instead.)
-	implementation group: 'com.baomidou', name: 'mybatis-plus-boot-starter-test', version: '3.5.5'
+	// https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-boot-starter
+	implementation group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: '3.4.0'
+
+	implementation 'mysql:mysql-connector-java:8.0.17'
+
 
 //    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
