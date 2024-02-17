@@ -1,1 +1,2 @@
-# nwu-public-resource-backend
+# 校园公共资源管理系统---后端
+
