@@ -17,7 +17,7 @@ public class User {
     private String logDate;  // 最近登录13位时间戳
     private String ipLocate; // IPv4地址
     private String fieldList;// 字段信息表
-
+    private String role;     // 权限
     public int getId() {
         return id;
     }

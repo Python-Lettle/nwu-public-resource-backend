@@ -26,6 +26,11 @@ public class Library {
     private int [][][] seats;
     /** 楼层数 **/
     private int floor_num;
+    /** 占用状态 **/
+    private int state;
+    /** 起始、终止时间 **/
+    private String start_time;
+    private String end_time;
 
     /**
      * Occupy 占座函数
@@ -40,7 +45,6 @@ public class Library {
         }
         return false;
     }
-
     public boolean checkSeat (int floor, int x, int y)
     {
         return seats[floor][x][y] == 1;
