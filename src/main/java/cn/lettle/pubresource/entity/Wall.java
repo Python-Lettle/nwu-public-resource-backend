@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Data
-public class msg_wall {
+public class Wall {
 
     private String publish_id;  // 发布者id
     private String pu_text;     // 发布信息
