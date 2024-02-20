@@ -11,8 +11,8 @@ public class Wall {
 
     private String publish_id;  // 发布者id
     private String pu_text;     // 发布信息
-    private String pu_state;    // 发布状态
+    private int pu_state;    // 发布状态
     private String comments_id; // 评论者id
     private String co_text;     // 评论信息
-    private String co_state;    // 评论状态
+    private int co_state;    // 评论状态
 }
