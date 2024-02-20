@@ -7,18 +7,20 @@
 
 package cn.lettle.pubresource.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.alibaba.fastjson2.JSON;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 public class Message<T>
 {
-    private String code;
-    private T data;
+    public String code;
+    public T data;
+
+    public static String occupySuccess() {return JSON.toJSONString(new Message<>("occupy","success"));}
+    public static String occupyFail() {return JSON.toJSONString(new Message<>("occupy","fail"));}
+    public static String releaseSuccess() {return JSON.toJSONString(new Message<>("release","success"));}
+    public static String releaseFail() {return JSON.toJSONString(new Message<>("release","fail"));}
 
     public Message (String c, T d) {
         code = c;

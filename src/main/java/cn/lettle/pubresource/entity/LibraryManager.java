@@ -10,10 +10,11 @@ package cn.lettle.pubresource.entity;
 
 import lombok.Getter;
 
+@Getter
 public class LibraryManager {
 
     /** 三维数组: 楼层 行x 列y **/
-    @Getter private int [][][] seats = {
+    private int [][][] seats = {
             // 1F 4x5
         {
             {0,0,0,0,0},
@@ -37,18 +38,22 @@ public class LibraryManager {
         }
     };
     /** 楼层数 **/
-    @Getter private final int floor_num = 3;
+    private final int floor_num = 3;
+
+//    public int getFloor_num() {return floor_num;}
+//    public int[][][] getSeats() {return seats;}
 
     /**
      * Occupy 占座函数
-     * @param floor 楼层数
+     * @param floor 楼层数 从1开始
      * @param x 行
      * @param y 列
      * @return boolean 占座是否成功
      */
     public boolean occupy (int floor, int x, int y)
     {
-        if (this.seats[floor][x][y] == 1) {
+        floor -= 1;
+        if (floor < 0 || floor >= floor_num || this.seats[floor][x][y] == 1) {
             return false;
         }
 
@@ -59,14 +64,15 @@ public class LibraryManager {
 
     /**
      * Release 释放座位函数 需要检查座位是否属于该用户
-     * @param floor 楼层数
+     * @param floor 楼层数 从1开始
      * @param x 行
      * @param y 列
      * @return boolean 是否释放成功
      */
     public boolean release (int floor, int x, int y)
     {
-        if (this.seats[floor][x][y] == 0) {
+        floor -= 1; // 转回数组意义上的下标
+        if (floor < 0 || floor >= floor_num || this.seats[floor][x][y] == 0) {
             return false;
         }
         this.seats[floor][x][y] = 0;
