@@ -24,8 +24,7 @@ public class LibraryLog {
     /** 占用状态: 0释放 1占用 **/
     private int state;
 
-    private int x;
-    private int y;
+    private int pos;
 
     /** 起始、终止时间 **/
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

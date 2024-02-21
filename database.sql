@@ -52,8 +52,7 @@ DROP TABLE IF EXISTS `library`;
 CREATE TABLE `library` (
   `id` int(11) NOT NULL,
   `floor_num` int(11) NOT NULL,
-  `x` int(11) NOT NULL,
-  `y` int(11) NOT NULL,
+  `pos` int(11) NOT NULL,
   `state` int(11) NOT NULL COMMENT '0释放 1占用',
   `start_time` datetime DEFAULT NULL,
   `end_time` datetime DEFAULT NULL,
@@ -87,6 +86,20 @@ CREATE TABLE `user` (
 
 insert  into `user`(`uid`,`name`,`pwd`,`Email`,`alw_eml`,`profile`,`state`,`pmt_grp`,`reg_date`,`log_date`,`ipLocate`,`fieldList`,`role`) values (2,'haha','haha','666@qq.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 
+/*Table structure for table `wall_article` */
+
+DROP TABLE IF EXISTS `wall_article`;
+
+CREATE TABLE `wall_article` (
+  `article_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '文章id',
+  `article_uid` int(11) unsigned NOT NULL COMMENT '发布者id',
+  `article_text` tinytext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT '内容',
+  `article_state` int(11) DEFAULT NULL COMMENT 'pass/auditting/failed',
+  PRIMARY KEY (`article_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+/*Data for the table `wall_article` */
+
 /*Table structure for table `wall_comment` */
 
 DROP TABLE IF EXISTS `wall_comment`;
@@ -101,20 +114,6 @@ CREATE TABLE `wall_comment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `wall_comment` */
-
-/*Table structure for table `wall_publish` */
-
-DROP TABLE IF EXISTS `wall_publish`;
-
-CREATE TABLE `wall_publish` (
-  `publish_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '文章id',
-  `publish_uid` int(11) unsigned NOT NULL COMMENT '发布者id',
-  `publish_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT '内容',
-  `publish_state` int(11) DEFAULT NULL COMMENT 'pass/auditting/failed',
-  PRIMARY KEY (`publish_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-/*Data for the table `wall_publish` */
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
