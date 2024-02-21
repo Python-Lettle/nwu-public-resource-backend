@@ -38,6 +38,9 @@ dependencies {
 
 	implementation 'mysql:mysql-connector-java:8.0.17'
 
+	// https://mvnrepository.com/artifact/com.auth0/java-jwt
+	implementation group: 'com.auth0', name: 'java-jwt', version: '4.0.0'
+
 
 //    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

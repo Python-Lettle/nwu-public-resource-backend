@@ -12,6 +12,7 @@ import lombok.*;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Message<T>
 {
     public String code;
@@ -23,16 +24,10 @@ public class Message<T>
     public static String releaseFail() {return JSON.toJSONString(new Message<>("release","fail"));}
     public static String registerSuccess() {return JSON.toJSONString(new Message<>("register","success"));}
     public static String registerFail() {return JSON.toJSONString(new Message<>("register","fail"));}
-    public static String loginSuccess() {return JSON.toJSONString(new Message<>("register","success"));}
-    public static String loginFail() {return JSON.toJSONString(new Message<>("register","fail"));}
-    public static String publishSuccess() {return JSON.toJSONString(new Message<>("register","success"));}
-    public static String publishFail() {return JSON.toJSONString(new Message<>("register","fail"));}
-    public static String checkSuccess() {return JSON.toJSONString(new Message<>("register","success"));}
-    public static String checkFail() {return JSON.toJSONString(new Message<>("register","fail"));}
-    public static String retailSuccess() {return JSON.toJSONString(new Message<>("register","success"));}
-    public static String retailFail() {return JSON.toJSONString(new Message<>("register","fail"));}
-    public Message (String c, T d) {
-        code = c;
-        data = d;
-    }
+    public static String loginSuccess() {return JSON.toJSONString(new Message<>("login","success"));}
+    public static String loginFail() {return JSON.toJSONString(new Message<>("login","fail"));}
+    public static String publishSuccess() {return JSON.toJSONString(new Message<>("publish","success"));}
+    public static String publishFail() {return JSON.toJSONString(new Message<>("publish","fail"));}
+    public static String checkSuccess() {return JSON.toJSONString(new Message<>("check","success"));}
+    public static String checkFail() {return JSON.toJSONString(new Message<>("check","fail"));}
 }

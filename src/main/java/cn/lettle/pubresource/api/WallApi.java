@@ -28,7 +28,7 @@ public class WallApi {
     public WallCommentMapper wallCommentMapper;
 
     /**
-     * 出版
+     * 发表文章
      * @param body_json
      * @return
      */
@@ -54,6 +54,11 @@ public class WallApi {
             return Message.publishFail();
     }
 
+    /**
+     * 审核文章
+     * @param body_json
+     * @return
+     */
     @PostMapping("/check")
     public String check(@RequestBody JSONObject body_json){
 
