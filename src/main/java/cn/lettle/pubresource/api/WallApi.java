@@ -55,18 +55,18 @@ public class WallApi {
         // TODO: 检查用户登录状态
         /** 获取参数 **/
         Integer uid = body_json.getIntValue("uid");         // 发布者id
-        Integer tid = body_json.getIntValue("article_id");  // 评论的文章id
+        Integer article_id = body_json.getIntValue("article_id");  // 评论的文章id
         String text = body_json.getString("text");          // 发布内容
 
         /** 发表评论 **/
         WallComment comment = new WallComment();
         comment.setComment_uid(uid);
         comment.setComment_text(text);
-        comment.setPublish_id(tid);
+        comment.setPublish_id(article_id);
         comment.setComment_state(WallArticleState.AUDITTING);
         wallCommentMapper.insert(comment);
 
-        log.info(String.format("%s 对文章(%d)发表一篇评论", uid, tid));
+        log.info(String.format("%s 对文章(%d)发表一篇评论", uid, article_id));
         return Message.publishSuccess();
     }
 

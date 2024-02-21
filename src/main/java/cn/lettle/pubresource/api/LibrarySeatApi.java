@@ -8,7 +8,7 @@
 
 package cn.lettle.pubresource.api;
 
-import cn.lettle.pubresource.entity.LibraryManager;
+import cn.lettle.pubresource.util.LibraryManager;
 import cn.lettle.pubresource.entity.Message;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
@@ -26,10 +26,9 @@ public class LibrarySeatApi {
     public String occupy (@RequestBody JSONObject body_json)
     {
         int floor = body_json.getIntValue("floor");
-        int x = body_json.getIntValue("x");
-        int y = body_json.getIntValue("y");
-        if (libraryManager.occupy(floor, x, y)) {
-            log.info(String.format("Floor %s x = %s, y = %s 被占座", floor, x, y));
+        int pos = body_json.getIntValue("pos");
+        if (libraryManager.occupy(floor, pos)) {
+            log.info(String.format("Floor %d pos = %d 被占座", floor, pos));
             return Message.occupySuccess();
         }
         return Message.occupyFail();
@@ -39,10 +38,9 @@ public class LibrarySeatApi {
     public String release (@RequestBody JSONObject body_json)
     {
         int floor = body_json.getIntValue("floor");
-        int x = body_json.getIntValue("x");
-        int y = body_json.getIntValue("y");
-        if (libraryManager.release(floor, x, y)) {
-            log.info(String.format("Floor %s x = %s, y = %s 被释放", floor, x, y));
+        int pos = body_json.getIntValue("pos");
+        if (libraryManager.release(floor, pos)) {
+            log.info(String.format("Floor %d pos = %d 被释放", floor, pos));
             return Message.releaseSuccess();
         }
         return Message.releaseFail();

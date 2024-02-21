@@ -19,8 +19,8 @@ import java.util.Map;
 public class ClassroomApi {
     public ClassroomMapper classroomMapper;
     @Mapper
-    @PostMapping("/occupy_cr")
-    public String occupy_cr(@RequestBody JSONObject body_json){
+    @PostMapping("/occupy")
+    public String occupy(@RequestBody JSONObject body_json){
         int b_id = body_json.getIntValue("building_id");
         String cr_id = body_json.getString("classroom_id");
 
@@ -45,8 +45,8 @@ public class ClassroomApi {
         }
     }
 
-    @GetMapping("/retail_cr")
-    public String retail_cr(@RequestBody JSONObject body_json){
+    @GetMapping("/detail")
+    public String detail(@RequestBody JSONObject body_json){
         int b_id = body_json.getIntValue("building_id");
         String cr_id = body_json.getString("classroom_id");
 

@@ -6,36 +6,18 @@
  * Description: 单例模式 图书馆管理类, 描述该图书馆每层座位情况, 预计直接储存在内存中, 用于 WebSocket 实时修改
  */
 
-package cn.lettle.pubresource.entity;
+package cn.lettle.pubresource.util;
 
 import lombok.Getter;
 
 @Getter
 public class LibraryManager {
 
-    /** 三维数组: 楼层 行x 列y **/
-    private int [][][] seats = {
-            // 1F 4x5
-        {
-            {0,0,0,0,0},
-            {0,0,0,0,0},
-            {0,0,0,0,0},
-            {0,0,0,0,0}
-        },
-            // 2F 5x8
-        {
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0}
-        },
-            // 3F 3x6
-        {
-            {0,0,0,0,0,0},
-            {0,0,0,0,0,0},
-            {0,0,0,0,0,0}
-        }
+    /** 二维数组: 楼层 座位号 **/
+    private int [][] seats = {
+            new int[10],
+            new int[40],
+            new int[20]
     };
     /** 楼层数 **/
     private final int floor_num = 3;
@@ -46,18 +28,17 @@ public class LibraryManager {
     /**
      * Occupy 占座函数
      * @param floor 楼层数 从1开始
-     * @param x 行
-     * @param y 列
+     * @param pos 位置
      * @return boolean 占座是否成功
      */
-    public boolean occupy (int floor, int x, int y)
+    public boolean occupy (int floor, int pos)
     {
-        floor -= 1;
-        if (floor < 0 || floor >= floor_num || this.seats[floor][x][y] == 1) {
+        floor -= 1; // 转回数组意义上的下标
+        if (floor < 0 || floor >= floor_num || this.seats[floor][pos] == 1) {
             return false;
         }
 
-        this.seats[floor][x][y] = 1;
+        this.seats[floor][pos] = 1;
         // TODO: 增加占座日志，放入数据库中
         return true;
     }
@@ -65,17 +46,16 @@ public class LibraryManager {
     /**
      * Release 释放座位函数 需要检查座位是否属于该用户
      * @param floor 楼层数 从1开始
-     * @param x 行
-     * @param y 列
+     * @param pos 位置
      * @return boolean 是否释放成功
      */
-    public boolean release (int floor, int x, int y)
+    public boolean release (int floor, int pos)
     {
         floor -= 1; // 转回数组意义上的下标
-        if (floor < 0 || floor >= floor_num || this.seats[floor][x][y] == 0) {
+        if (floor < 0 || floor >= floor_num || this.seats[floor][pos] == 0) {
             return false;
         }
-        this.seats[floor][x][y] = 0;
+        this.seats[floor][pos] = 0;
         // TODO: 增加释放座位日志，放入数据库中
         return true;
     }
@@ -83,13 +63,12 @@ public class LibraryManager {
     /**
      * 检查某个座位是否被占用
      * @param floor 楼层数
-     * @param x 行
-     * @param y 列
+     * @param pos 位置
      * @return boolean true为已经被占用 false为未被占用
      */
-    public boolean checkSeatOccupied (int floor, int x, int y)
+    public boolean checkSeatOccupied (int floor, int pos)
     {
-        return seats[floor][x][y] == 1;
+        return seats[floor][pos] == 1;
     }
 
     /** 单例模式 **/
