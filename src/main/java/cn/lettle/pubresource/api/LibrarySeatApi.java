@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
+@CrossOrigin
 @RequestMapping("/library/")
 public class LibrarySeatApi {
     private static final LibraryManager libraryManager = LibraryManager.getInstance();

@@ -15,6 +15,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/classroom/")
+@CrossOrigin
 public class ClassroomApi {
     public ClassroomMapper classroomMapper;
     @Mapper

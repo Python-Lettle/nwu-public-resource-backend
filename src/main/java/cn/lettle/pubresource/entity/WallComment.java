@@ -14,7 +14,7 @@ import lombok.Data;
 
 @Data
 public class WallComment {
-    @TableId(value = "comment_id", type = IdType.ASSIGN_ID)
+    @TableId(value = "comment_id", type = IdType.AUTO)
     private Integer comment_id;         // 评论id
     private Integer comment_uid;        // 评论者id
     private Integer publish_id;         // 评论的文章id

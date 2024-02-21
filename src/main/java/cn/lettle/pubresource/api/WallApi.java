@@ -2,27 +2,27 @@ package cn.lettle.pubresource.api;
 
 import cn.lettle.pubresource.entity.Message;
 import cn.lettle.pubresource.entity.WallComment;
-import cn.lettle.pubresource.entity.WallPublish;
+import cn.lettle.pubresource.entity.WallArticle;
 import cn.lettle.pubresource.mapper.WallCommentMapper;
-import cn.lettle.pubresource.mapper.WallPublishMapper;
-import com.alibaba.fastjson2.JSON;
+import cn.lettle.pubresource.mapper.WallArticleMapper;
+import cn.lettle.pubresource.util.WallArticleState;
 import com.alibaba.fastjson2.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @Slf4j
 @Repository
 @CrossOrigin
 @RequestMapping("/wall/")
+@RestController
 public class WallApi {
     @Autowired
-    public WallPublishMapper wallPublishMapper;
+    public WallArticleMapper wallArticleMapper;
 
     @Autowired
     public WallCommentMapper wallCommentMapper;
@@ -32,26 +32,42 @@ public class WallApi {
      * @param body_json
      * @return
      */
-    @Mapper
-    @PostMapping("/publish")
-    public String publish(@RequestBody JSONObject body_json){
-        String publish_id = body_json.getString("publish_id");
-        String comments_id = body_json.getString("comments_id");
-        String publish_text = body_json.getString("publish_text");
-        String comment_text = body_json.getString("comment_text");
+    @PostMapping("/publish_article")
+    public String publish_article(@RequestBody JSONObject body_json) {
+        // TODO: 检查用户登录状态
+        /** 获取参数 **/
+        Integer uid = body_json.getIntValue("uid");        // 发布者id
+        String text = body_json.getString("text");      // 发布内容
 
-        WallPublish publish_wallPublish = wallPublishMapper.selectById(publish_id);
-        WallComment comment_wallPublish = wallCommentMapper.selectById(comments_id);
+        /** 发表文章 **/
+        WallArticle article = new WallArticle();
+        article.setArticle_uid(uid);
+        article.setArticle_text(text);
+        article.setArticle_state(WallArticleState.AUDITTING);
+        wallArticleMapper.insert(article);
 
-        publish_wallPublish.setPublish_text(publish_text);
-        comment_wallPublish.setComment_text(comment_text);
+        log.info(String.format("%s 发表一篇文章", uid));
+        return Message.publishSuccess();
+    }
 
-        if( publish_wallPublish.getPublish_text() != null || comment_wallPublish.getComment_text() != null ) {
-            log.info("已提交，审阅中···");
-            return Message.publishSuccess();
-        }
-        else
-            return Message.publishFail();
+    @PostMapping("/publish_comment")
+    public String publish_comment (@RequestBody JSONObject body_json) {
+        // TODO: 检查用户登录状态
+        /** 获取参数 **/
+        Integer uid = body_json.getIntValue("uid");         // 发布者id
+        Integer tid = body_json.getIntValue("article_id");  // 评论的文章id
+        String text = body_json.getString("text");          // 发布内容
+
+        /** 发表评论 **/
+        WallComment comment = new WallComment();
+        comment.setComment_uid(uid);
+        comment.setComment_text(text);
+        comment.setPublish_id(tid);
+        comment.setComment_state(WallArticleState.AUDITTING);
+        wallCommentMapper.insert(comment);
+
+        log.info(String.format("%s 对文章(%d)发表一篇评论", uid, tid));
+        return Message.publishSuccess();
     }
 
     /**
@@ -59,50 +75,44 @@ public class WallApi {
      * @param body_json
      * @return
      */
-    @PostMapping("/check")
-    public String check(@RequestBody JSONObject body_json){
+    @PostMapping("/examine")
+    public String examine(@RequestBody JSONObject body_json) {
+        // TODO: 检查用户权限
+        /** 获取参数 **/
+        Integer id = body_json.getIntValue("id");        // 文章id
+        int type = body_json.getIntValue("type");       // 文章类型
+        int state = body_json.getIntValue("state");     // 修改为状态
 
-        String publish_id = body_json.getString("publish_id");
-        String comments_id = body_json.getString("comments_id");
-
-        WallPublish publish_wallPublish = wallPublishMapper.selectById(publish_id);
-        WallComment comment_wallPublish = wallCommentMapper.selectById(comments_id);
-
-        if(publish_wallPublish.getPublish_text() != null) {
-            publish_wallPublish.setPublish_state(1);
-            log.info("审核通过");
-            return Message.checkSuccess();
+        /** 根据类型 从不同数据库查询文章 **/
+        if (type == 1) {            // 审核文章
+            WallArticle article = wallArticleMapper.selectById(id);
+            article.setArticle_state(state);
+            wallArticleMapper.updateById(article);
+        } else {                    // 审核评论
+            WallComment comment = wallCommentMapper.selectById(id);
+            comment.setComment_state(state);
+            wallCommentMapper.updateById(comment);
         }
-        else if(comment_wallPublish.getComment_text() != null) {
-            comment_wallPublish.setComment_state(1);
-            log.info("评论审核通过");
-            return Message.checkSuccess();
-        }
-        else
-            return Message.checkFail();
+
+        return Message.examineSuccess();
     }
 
-    @GetMapping("/retail")
-    public String wall_retail(@RequestBody JSONObject body_json){
-        Map<String,String> map = new HashMap<>();
+    /**
+     * 获取文章
+     * @param body_json
+     * @return
+     */
+    @GetMapping("/getArticle")
+    public String getArticle(@RequestBody JSONObject body_json){
+        /** 获取参数 **/
+        Integer num = body_json.getIntValue("num");        // 获取 num 篇文章
+        /** 构建 wrapper 获取最后num篇文章 **/
+        QueryWrapper<WallArticle> wrapper = new QueryWrapper<>();       // new wrapper 对象
+        wrapper.last(String.format("limit %d", num));                   // wrapper.last() 和 limit num 限制查询最后 num 条
+        List<WallArticle> articles = wallArticleMapper.selectList(wrapper);
 
-        String publish_id = body_json.getString("publish_id");
-        String comments_id = body_json.getString("comments_id");
-
-        WallPublish publish_wallPublish = wallPublishMapper.selectById(publish_id);
-        WallComment comment_wallPublish = wallCommentMapper.selectById(comments_id);
-
-        if((publish_wallPublish.getPublish_text() != null && publish_wallPublish.getPublish_state() == 1) ||
-                (comment_wallPublish.getComment_text() != null && comment_wallPublish.getComment_state() == 1)) {
-            log.info("查看校园墙");
-            map.put("publish",JSON.toJSONString(publish_wallPublish));
-            map.put("comments",JSON.toJSONString(comment_wallPublish));
-            return JSON.toJSONString(map);
-        }
-        else {
-            map.put("publish","failed");
-            map.put("comments","failed");
-            return JSON.toJSONString(map);
-        }
+        log.info(String.format("获取 %d 篇文章", articles.size()));
+        return Message.getArticles(articles);
     }
 }
+

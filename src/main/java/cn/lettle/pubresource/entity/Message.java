@@ -10,6 +10,8 @@ package cn.lettle.pubresource.entity;
 import com.alibaba.fastjson2.JSON;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,6 +30,11 @@ public class Message<T>
     public static String loginFail() {return JSON.toJSONString(new Message<>("login","fail"));}
     public static String publishSuccess() {return JSON.toJSONString(new Message<>("publish","success"));}
     public static String publishFail() {return JSON.toJSONString(new Message<>("publish","fail"));}
-    public static String checkSuccess() {return JSON.toJSONString(new Message<>("check","success"));}
-    public static String checkFail() {return JSON.toJSONString(new Message<>("check","fail"));}
+    public static String examineSuccess() {return JSON.toJSONString(new Message<>("examine","success"));}
+    public static String examineFail() {return JSON.toJSONString(new Message<>("examine","fail"));}
+    public static String getArticles(List<WallArticle> articles) {
+        return JSON.toJSONString(
+                new Message<>("articles", JSON.toJSONString(articles))
+        );
+    }
 }
