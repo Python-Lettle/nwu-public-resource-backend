@@ -34,11 +34,13 @@ CREATE TABLE `classroom` (
 DROP TABLE IF EXISTS `knowledge`;
 
 CREATE TABLE `knowledge` (
+  `id` int(11) NOT NULL,
   `subject` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT 'classify',
   `sensitivity` int(11) DEFAULT NULL COMMENT 'low/high',
   `low_text` text,
   `high_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT '内容',
-  `view_num` int(11) DEFAULT NULL
+  `view_num` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `knowledge` */
@@ -48,13 +50,14 @@ CREATE TABLE `knowledge` (
 DROP TABLE IF EXISTS `library`;
 
 CREATE TABLE `library` (
+  `id` int(11) NOT NULL,
   `floor_num` int(11) NOT NULL,
   `x` int(11) NOT NULL,
   `y` int(11) NOT NULL,
   `state` int(11) NOT NULL COMMENT '0释放 1占用',
   `start_time` datetime DEFAULT NULL,
   `end_time` datetime DEFAULT NULL,
-  PRIMARY KEY (`floor_num`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `library` */
@@ -64,38 +67,54 @@ CREATE TABLE `library` (
 DROP TABLE IF EXISTS `user`;
 
 CREATE TABLE `user` (
-  `id` int(11) NOT NULL,
-  `name` tinytext NOT NULL,
+  `uid` int(11) NOT NULL,
+  `name` tinytext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `pwd` tinytext NOT NULL,
   `Email` tinytext NOT NULL,
-  `alwEml` int(11) DEFAULT NULL,
+  `alw_eml` int(11) DEFAULT NULL,
   `profile` tinytext,
   `state` int(11) DEFAULT NULL,
-  `pmtGrp` int(11) DEFAULT NULL,
-  `regDate` tinytext,
-  `logDate` tinytext,
+  `pmt_grp` int(11) DEFAULT NULL,
+  `reg_date` datetime DEFAULT NULL,
+  `log_date` datetime DEFAULT NULL,
   `ipLocate` tinytext,
   `fieldList` tinytext,
   `role` tinytext,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `user` */
 
-/*Table structure for table `wall` */
+insert  into `user`(`uid`,`name`,`pwd`,`Email`,`alw_eml`,`profile`,`state`,`pmt_grp`,`reg_date`,`log_date`,`ipLocate`,`fieldList`,`role`) values (2,'haha','haha','666@qq.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 
-DROP TABLE IF EXISTS `wall`;
+/*Table structure for table `wall_comment` */
 
-CREATE TABLE `wall` (
-  `publish_id` tinytext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT '发布者id',
-  `pu_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT '内容',
-  `pu_state` int(11) DEFAULT NULL COMMENT 'pass/auditting/failed',
-  `comments_id` tinytext,
-  `co_text` text,
-  `co_state` int(11) DEFAULT NULL
+DROP TABLE IF EXISTS `wall_comment`;
+
+CREATE TABLE `wall_comment` (
+  `comment_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '评论id',
+  `comment_uid` int(11) unsigned NOT NULL COMMENT '发布者id',
+  `publish_id` int(10) unsigned NOT NULL COMMENT '评论的文章id',
+  `comment_text` text,
+  `comment_state` int(11) DEFAULT NULL,
+  PRIMARY KEY (`comment_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Data for the table `wall_comment` */
+
+/*Table structure for table `wall_publish` */
+
+DROP TABLE IF EXISTS `wall_publish`;
+
+CREATE TABLE `wall_publish` (
+  `publish_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '文章id',
+  `publish_uid` int(11) unsigned NOT NULL COMMENT '发布者id',
+  `publish_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT '内容',
+  `publish_state` int(11) DEFAULT NULL COMMENT 'pass/auditting/failed',
+  PRIMARY KEY (`publish_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-/*Data for the table `wall` */
+/*Data for the table `wall_publish` */
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
