@@ -1,9 +1,9 @@
 package cn.lettle.pubresource.socket;
 
 
-import jakarta.websocket.server.ServerEndpoint;
 import org.springframework.stereotype.Component;
 
+import javax.websocket.server.ServerEndpoint;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;

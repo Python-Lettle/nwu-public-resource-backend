@@ -8,6 +8,7 @@
 
 package cn.lettle.pubresource.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -16,7 +17,8 @@ import java.util.Date;
 
 @Data
 public class LibraryLog {
-
+    @TableId("id")
+    private Integer id;
     private int floor_num;
 
     /** 占用状态: 0释放 1占用 **/

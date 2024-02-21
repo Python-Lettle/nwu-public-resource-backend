@@ -5,7 +5,7 @@ import cn.lettle.pubresource.entity.User;
 import cn.lettle.pubresource.mapper.UserMapper;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -15,19 +15,22 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RequestMapping("/user/")
 public class UserApi {
+    @Autowired
     public UserMapper userMapper;
-    @Mapper
     @PostMapping("/login")
     public String login(@RequestBody JSONObject body_json)
     {
+        // 接收参数
         int id = body_json.getIntValue("id");
         String pwd = body_json.getString("pwd");
+
+        // 查询有无此用户
         User user = userMapper.selectById(id);
         if(user == null)
-            return Message.loginFail();
+            return Message.loginFail();         // 没查到用户id
         else
             if(user.getPwd().equals(pwd)) {
-                log.info("登录成功");
+                log.info(String.format("%s 登录成功", user.getName()));
                 return Message.loginSuccess();
             }
             else
@@ -38,11 +41,23 @@ public class UserApi {
     @PostMapping("/register")
     public String register(@RequestBody JSONObject body_json)
     {
+        // 接收参数
         int id = body_json.getIntValue("id");
         String pwd = body_json.getString("pwd");
         String email = body_json.getString("email");
-        if(id != 0 && pwd != null && email != null) {
-            log.info("注册成功");
+        String username = body_json.getString("username");
+
+        // 检查是否可以注册
+        User check = userMapper.selectById(id);
+        if(check == null && id != 0 && pwd != null && email != null) {
+            // 新建一个 User 类 并为其设置我们注册的信息
+            User user = new User();
+            user.setUid(id);
+            user.setEmail(email);
+            user.setPwd(pwd);
+            user.setName(username);
+            userMapper.insert(user);
+            log.info(String.format("id: %d, name: %s, email: %s 注册成功", id, username, email));
             return Message.registerSuccess();
         }
         return Message.registerFail();

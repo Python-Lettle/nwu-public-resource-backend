@@ -1,11 +1,15 @@
 package cn.lettle.pubresource.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 public class User {
-
-    private int id;          // 唯一标识符
+    @TableId(value = "uid")
+    private Integer uid;      // 唯一标识符
     private String name;     // 账户名
     private String pwd;      // 密码
     private String Email;    // 电子邮件
@@ -13,116 +17,20 @@ public class User {
     private String profile;  // 头像地址
     private int state;       // 状态代码
     private int pmtGrp;      // 权限组代码
-    private String regDate;  // 注册日期13位时间戳
-    private String logDate;  // 最近登录13位时间戳
+    private Date regDate;  // 注册日期13位时间戳
+    private Date logDate;  // 最近登录13位时间戳
+
+    /**
+     * 这两条使用 TableField 是因为 mybatis-plus
+     *   会自动将下面这两个变量解析为类似 ip_locate 的形式去查表，而我们表中属性是原文
+     *   因此使用 @TableField 注解来强制解析成这个就可以了
+     */
+    @TableField("ipLocate")
     private String ipLocate; // IPv4地址
+    @TableField("fieldList")
     private String fieldList;// 字段信息表
+
+
     private String role;     // 权限
-    public int getId() {
-        return id;
-    }
 
-    public User setId(int id) {
-        this.id = id;
-        return this;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public User setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public String getPwd() {
-        return pwd;
-    }
-
-    public User setPwd(String pwd) {
-        this.pwd = pwd;
-        return this;
-    }
-
-    public String getEmail() {
-        return Email;
-    }
-
-    public User setEmail(String email) {
-        Email = email;
-        return this;
-    }
-
-    public int getAlwEml() {
-        return alwEml;
-    }
-
-    public User setAlwEml(int alwEml) {
-        this.alwEml = alwEml;
-        return this;
-    }
-
-    public String getProfile() {
-        return profile;
-    }
-
-    public User setProfile(String profile) {
-        this.profile = profile;
-        return this;
-    }
-
-    public int getState() {
-        return state;
-    }
-
-    public User setState(int state) {
-        this.state = state;
-        return this;
-    }
-
-    public int getPmtGrp() {
-        return pmtGrp;
-    }
-
-    public User setPmtGrp(int pmtGrp) {
-        this.pmtGrp = pmtGrp;
-        return this;
-    }
-
-    public String getRegDate() {
-        return regDate;
-    }
-
-    public User setRegDate(String regDate) {
-        this.regDate = regDate;
-        return this;
-    }
-
-    public String getLogDate() {
-        return logDate;
-    }
-
-    public User setLogDate(String logDate) {
-        this.logDate = logDate;
-        return this;
-    }
-
-    public String getIpLocate() {
-        return ipLocate;
-    }
-
-    public User setIpLocate(String ipLocate) {
-        this.ipLocate = ipLocate;
-        return this;
-    }
-
-    public String getFieldList() {
-        return fieldList;
-    }
-
-    public User setFieldList(String fieldList) {
-        this.fieldList = fieldList;
-        return this;
-    }
 }
