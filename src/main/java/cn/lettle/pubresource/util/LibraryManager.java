@@ -33,11 +33,13 @@ public class LibraryManager {
      */
     public boolean occupy (int floor, int pos)
     {
-        floor -= 1; // 转回数组意义上的下标
-        if (floor < 0 || floor >= floor_num || this.seats[floor][pos] == 1) {
+        /** 将参数转换成数组下标 **/
+        floor -= 1;
+        pos -= 1;
+        /** 检查参数合法性 **/
+        if (!checkPosAvailable(floor, pos) || this.seats[floor][pos] == 1) {
             return false;
         }
-
         this.seats[floor][pos] = 1;
         // TODO: 增加占座日志，放入数据库中
         return true;
@@ -51,8 +53,11 @@ public class LibraryManager {
      */
     public boolean release (int floor, int pos)
     {
-        floor -= 1; // 转回数组意义上的下标
-        if (floor < 0 || floor >= floor_num || this.seats[floor][pos] == 0) {
+        /** 将参数转换成数组下标 **/
+        floor -= 1;
+        pos -= 1;
+        /** 检查参数合法性 **/
+        if (!checkPosAvailable(floor, pos) || this.seats[floor][pos] == 0) {
             return false;
         }
         this.seats[floor][pos] = 0;
@@ -68,7 +73,24 @@ public class LibraryManager {
      */
     public boolean checkSeatOccupied (int floor, int pos)
     {
+        floor -= 1;
+        pos -= 1;
+        if (!checkPosAvailable(floor, pos)) {
+            return true;
+        }
         return seats[floor][pos] == 1;
+    }
+
+    /**
+     * 检查座位位置是否合法
+     * @return boolean 合法性
+     */
+    public boolean checkPosAvailable(int floor, int pos)
+    {
+        if (floor < 0 || floor >= floor_num) {
+            return false;
+        }
+        return true;
     }
 
     /** 单例模式 **/

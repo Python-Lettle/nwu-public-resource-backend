@@ -3,9 +3,12 @@ package cn.lettle.pubresource.api;
 import cn.lettle.pubresource.entity.Classroom;
 import cn.lettle.pubresource.entity.Message;
 import cn.lettle.pubresource.mapper.ClassroomMapper;
+import cn.lettle.pubresource.util.ClassroomManager;
+import cn.lettle.pubresource.util.ClassroomState;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -17,44 +20,73 @@ import java.util.Map;
 @RequestMapping("/classroom/")
 @CrossOrigin
 public class ClassroomApi {
-    public ClassroomMapper classroomMapper;
-    @Mapper
+    @Autowired
+    private ClassroomMapper classroomMapper;
+
+    private static final ClassroomManager classroomManager = ClassroomManager.getInstance();
+
+    /**
+     * 向数据库中添加请求，但不更改 classManager 中存储的占用情况
+     */
     @PostMapping("/occupy")
     public String occupy(@RequestBody JSONObject body_json){
-        int b_id = body_json.getIntValue("building_id");
-        String cr_id = body_json.getString("classroom_id");
+        int building = body_json.getIntValue("building");
+        int floor = body_json.getIntValue("floor");
+        int classroom = body_json.getIntValue("classroom");
+        int uid = body_json.getIntValue("uid");
 
-        Map<String,Object> map = new HashMap<>();
-        map.put(cr_id,b_id);
-        List<Classroom> list = classroomMapper.selectByMap(map);
-
-        if(list != null){
-            int state = list.get(0).getState();
-            if(state == 0) {
-                log.info(String.format("Classroom %s%s 未被占用", b_id, cr_id));
-                return Message.occupySuccess();
-            }
-            else {
-                log.info("不可被占用");
-                return Message.occupyFail();
-            }
+        Classroom classroom1 = classroomManager.occupy(building, floor, classroom, uid);
+        if (classroom1 != null) {
+            classroomMapper.insert(classroom1);
+            return Message.occupySuccess();
         }
-        else {
-            log.info("不可被占用");
-            return Message.occupyFail();
-        }
+        return Message.occupyFail();
     }
 
+    /**
+     * 更改 classManager 中存储的占用情况
+     */
+    @PostMapping("/release")
+    public String release(@RequestBody JSONObject body_json) {
+        /** 获取参数 **/
+        int request_id = body_json.getIntValue("request_id");
+        /** 根据 id 获取占用的教室 **/
+        Classroom classroom = classroomMapper.selectById(request_id);
+        if (classroomManager.release(classroom)) {
+            classroom.setState(ClassroomState.NONE);
+            classroomMapper.updateById(classroom);
+            return Message.releaseSuccess();
+        }
+        return Message.releaseFail();
+    }
+
+    @PostMapping("/examine")
+    public String examine(@RequestBody JSONObject body_json) {
+        /** 获取参数 **/
+        int request_id = body_json.getIntValue("request_id");
+        int state = body_json.getIntValue("state");
+        /** 判断 state 为成功或失败的一种 **/
+        if (state == ClassroomState.PASS || state == ClassroomState.FAIL) {
+            // 获取库中的信息
+            Classroom classroom = classroomMapper.selectById(request_id);
+            // 设置为新的状态
+            classroom.setState(state);
+            // Manager 审核
+            if (classroomManager.examine(classroom)){
+                classroomMapper.updateById(classroom);
+                return Message.examineSuccess();
+            } else {
+                return Message.message("examine", "occupied");
+            }
+        }
+
+        return Message.examineFail();
+    }
+
+
     @GetMapping("/detail")
-    public String detail(@RequestBody JSONObject body_json){
-        int b_id = body_json.getIntValue("building_id");
-        String cr_id = body_json.getString("classroom_id");
-
-        Map<String,Object> map = new HashMap<>();
-        map.put(cr_id,b_id);
-        List<Classroom> list = classroomMapper.selectByMap(map);
-
-        return JSONObject.toJSONString(list.get(0).getState());
+    public String detail() {
+        return JSONObject.toJSONString(classroomManager.getClassrooms());
     }
 
 }

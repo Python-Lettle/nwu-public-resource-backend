@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Slf4j
-@Repository
 @CrossOrigin
 @RequestMapping("/wall/")
 @RestController

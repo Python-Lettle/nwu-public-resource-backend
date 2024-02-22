@@ -20,6 +20,10 @@ public class Message<T>
     public String code;
     public T data;
 
+    public static String message(String code, String data) {
+        return JSON.toJSONString(new Message<>(code,data));
+    }
+
     public static String occupySuccess() {return JSON.toJSONString(new Message<>("occupy","success"));}
     public static String occupyFail() {return JSON.toJSONString(new Message<>("occupy","fail"));}
     public static String releaseSuccess() {return JSON.toJSONString(new Message<>("release","success"));}

@@ -1,9 +1,8 @@
 /**
- * Created with IntelliJ IDEA.
  * Author: Lettle
  * Date: 2024/2/21
  * Time: 20:14
- * Description:
+ * Description: 用于描述信息墙信息审核状态
  */
 
 package cn.lettle.pubresource.util;
