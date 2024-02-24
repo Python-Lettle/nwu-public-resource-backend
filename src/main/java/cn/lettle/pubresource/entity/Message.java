@@ -43,6 +43,10 @@ public class Message<T>
     public static String publishFail() {return JSON.toJSONString(new Message<>("publish","fail"));}
     public static String examineSuccess() {return JSON.toJSONString(new Message<>("examine","success"));}
     public static String examineFail() {return JSON.toJSONString(new Message<>("examine","fail"));}
+    public static String secretFail() {return JSON.toJSONString(new Message<>("secret","fail"));}
+    public static String secretSuccess() {return JSON.toJSONString(new Message<>("secret","success"));}
+    public static String changeSuccess() {return JSON.toJSONString(new Message<>("change","success"));}
+    public static String changeFail() {return JSON.toJSONString(new Message<>("change","fail"));}
     public static String getArticles(List<WallArticle> articles) {
         return JSON.toJSONString(
                 new Message<>("articles", JSON.toJSONString(articles))
