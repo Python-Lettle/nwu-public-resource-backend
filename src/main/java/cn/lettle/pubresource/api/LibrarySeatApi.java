@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -31,6 +32,7 @@ import java.util.Map;
 @CrossOrigin
 @RequestMapping("/library/")
 public class LibrarySeatApi {
+    private static final long HOUR = 3600000L;
     private static final LibraryManager libraryManager = LibraryManager.getInstance();
 
     @Autowired
@@ -47,7 +49,20 @@ public class LibrarySeatApi {
         int uid = body_json.getIntValue("id");
 
         // 先检查是否已经有一个座位
-        if (libraryManager.checkSeatOccupied(floor, pos)) {
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("uid", uid);
+        List<LibraryLog> libraryLogs = libraryMapper.selectList(wrapper);
+        boolean havSeat = false;
+        for (int i=0; i<libraryLogs.size(); i++) {
+            LibraryLog nowLog = libraryLogs.get(i);
+            if (!isExpired(new Date(), nowLog.getEnd_time(), HOUR)) {
+                // 日志没有过期
+                havSeat = true;
+                break;
+            }
+        }
+
+        if (libraryManager.checkSeatOccupied(floor, pos) && havSeat) {
             return Message.occupyFail();
         }
 
@@ -60,9 +75,8 @@ public class LibrarySeatApi {
             libraryLog.setFloor_num(floor);
             libraryLog.setPos(pos);
             Date now = new Date();
-            long hour = 3600000L;
             libraryLog.setStart_time(now);
-            libraryLog.setEnd_time(new Date(now.getTime()+hour));
+            libraryLog.setEnd_time(new Date(now.getTime()+HOUR));
             libraryMapper.insert(libraryLog);
             return Message.occupySuccess();
         }
@@ -93,14 +107,24 @@ public class LibrarySeatApi {
     @PostMapping("/getMySeat")
     public String getMySeat(@RequestBody JSONObject body_json) {
         int uid = body_json.getIntValue("uid");
+        // 检查是否已经有一个座位
         QueryWrapper wrapper = new QueryWrapper();
         wrapper.eq("uid", uid);
-        LibraryLog liblog = libraryMapper.selectOne(wrapper);
+        List<LibraryLog> libraryLogs = libraryMapper.selectList(wrapper);
+        LibraryLog mySeat = null;
+        for (int i=0; i<libraryLogs.size(); i++) {
+            LibraryLog nowLog = libraryLogs.get(i);
+            if (!isExpired(new Date(), nowLog.getEnd_time(), HOUR)) {
+                // 日志没有过期
+                mySeat = nowLog;
+                break;
+            }
+        }
 
         Map<String, String> map = new HashMap<>();
-        if (liblog != null && libraryManager.checkSeatOccupied(liblog.getFloor_num(), liblog.getPos())) {
-            map.put("floor", String.valueOf(liblog.getFloor_num()));
-            map.put("seat", String.valueOf(liblog.getPos()));
+        if (mySeat != null && libraryManager.checkSeatOccupied(mySeat.getFloor_num(), mySeat.getPos())) {
+            map.put("floor", String.valueOf(mySeat.getFloor_num()));
+            map.put("seat", String.valueOf(mySeat.getPos()));
             map.put("code", "success");
         } else {
             map.put("code", "fail");
@@ -112,6 +136,13 @@ public class LibrarySeatApi {
     public String getSeats ()
     {
         return JSON.toJSONString(libraryManager.getSeats());
+    }
+
+    /**
+     * 时间段是否过期了
+     */
+    public static boolean isExpired (Date nowTime, Date endTime, long during) {
+        return endTime.getTime() - nowTime.getTime() > during;
     }
 
 }
