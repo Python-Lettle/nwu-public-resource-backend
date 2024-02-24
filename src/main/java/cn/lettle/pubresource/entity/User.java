@@ -13,12 +13,12 @@ public class User {
     private String name;     // 账户名
     private String pwd;      // 密码
     private String Email;    // 电子邮件
-    private int alwEml;      // 是否接收通知
+    private int alw_eml;      // 是否接收通知
     private String profile;  // 头像地址
     private int state;       // 状态代码
-    private int pmtGrp;      // 权限组代码
-    private Date regDate;  // 注册日期13位时间戳
-    private Date logDate;  // 最近登录13位时间戳
+    private int pmt_grp;      // 权限组代码
+    private Date reg_date;  // 注册日期13位时间戳
+    private Date log_date;  // 最近登录13位时间戳
 
     /**
      * 这两条使用 TableField 是因为 mybatis-plus

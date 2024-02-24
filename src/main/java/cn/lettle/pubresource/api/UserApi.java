@@ -3,11 +3,13 @@ package cn.lettle.pubresource.api;
 import cn.lettle.pubresource.entity.Message;
 import cn.lettle.pubresource.entity.User;
 import cn.lettle.pubresource.mapper.UserMapper;
+import cn.lettle.pubresource.util.SystemDateUtils;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 
 
 @Slf4j
@@ -22,7 +24,7 @@ public class UserApi {
     {
         // 接收参数
         int id = body_json.getIntValue("id");
-        String pwd = body_json.getString("pwd");
+        String pwd = body_json.getString("password");
 
         // 查询有无此用户
         User user = userMapper.selectById(id);
@@ -31,7 +33,7 @@ public class UserApi {
         else
             if(user.getPwd().equals(pwd)) {
                 log.info(String.format("%s 登录成功", user.getName()));
-                return Message.loginSuccess();
+                return Message.loginSuccess(user);
             }
             else
                 return Message.loginFail();
@@ -56,6 +58,8 @@ public class UserApi {
             user.setEmail(email);
             user.setPwd(pwd);
             user.setName(username);
+            user.setReg_date(SystemDateUtils.getDaDate());
+            user.setRole("stu");
             userMapper.insert(user);
             log.info(String.format("id: %d, name: %s, email: %s 注册成功", id, username, email));
             return Message.registerSuccess();

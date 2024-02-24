@@ -10,7 +10,9 @@ package cn.lettle.pubresource.entity;
 import com.alibaba.fastjson2.JSON;
 import lombok.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -30,7 +32,12 @@ public class Message<T>
     public static String releaseFail() {return JSON.toJSONString(new Message<>("release","fail"));}
     public static String registerSuccess() {return JSON.toJSONString(new Message<>("register","success"));}
     public static String registerFail() {return JSON.toJSONString(new Message<>("register","fail"));}
-    public static String loginSuccess() {return JSON.toJSONString(new Message<>("login","success"));}
+    public static String loginSuccess(User user) {
+        Map<String, String> map = new HashMap<>();
+        map.put("username", user.getName());
+        map.put("id", String.valueOf(user.getUid()));
+        return JSON.toJSONString(new Message<>("login", map));
+    }
     public static String loginFail() {return JSON.toJSONString(new Message<>("login","fail"));}
     public static String publishSuccess() {return JSON.toJSONString(new Message<>("publish","success"));}
     public static String publishFail() {return JSON.toJSONString(new Message<>("publish","fail"));}

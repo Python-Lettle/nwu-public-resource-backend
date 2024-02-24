@@ -21,13 +21,18 @@ USE `nwu_public_resource`;
 DROP TABLE IF EXISTS `classroom`;
 
 CREATE TABLE `classroom` (
-  `building_id` int(11) DEFAULT NULL COMMENT '3',
-  `classroom_id` tinytext COMMENT 'J301',
-  `state` int(11) DEFAULT NULL COMMENT 'free/classing',
-  `num` int(11) DEFAULT NULL COMMENT 'studying_student num(state=free)'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `request_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `building` int(11) NOT NULL COMMENT '3',
+  `floor` int(11) NOT NULL,
+  `classroom` int(11) NOT NULL,
+  `state` int(11) NOT NULL COMMENT 'free/classing',
+  `request_uid` int(11) DEFAULT NULL COMMENT '申请人id',
+  PRIMARY KEY (`request_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `classroom` */
+
+insert  into `classroom`(`request_id`,`building`,`floor`,`classroom`,`state`,`request_uid`) values (2,0,1,2,0,2021117403);
 
 /*Table structure for table `knowledge` */
 
@@ -45,21 +50,22 @@ CREATE TABLE `knowledge` (
 
 /*Data for the table `knowledge` */
 
-/*Table structure for table `library` */
+/*Table structure for table `library_log` */
 
-DROP TABLE IF EXISTS `library`;
+DROP TABLE IF EXISTS `library_log`;
 
-CREATE TABLE `library` (
-  `id` int(11) NOT NULL,
+CREATE TABLE `library_log` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uid` int(11) NOT NULL,
   `floor_num` int(11) NOT NULL,
   `pos` int(11) NOT NULL,
   `state` int(11) NOT NULL COMMENT '0释放 1占用',
   `start_time` datetime DEFAULT NULL,
   `end_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-/*Data for the table `library` */
+/*Data for the table `library_log` */
 
 /*Table structure for table `user` */
 
@@ -84,7 +90,7 @@ CREATE TABLE `user` (
 
 /*Data for the table `user` */
 
-insert  into `user`(`uid`,`name`,`pwd`,`Email`,`alw_eml`,`profile`,`state`,`pmt_grp`,`reg_date`,`log_date`,`ipLocate`,`fieldList`,`role`) values (2,'haha','haha','666@qq.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+insert  into `user`(`uid`,`name`,`pwd`,`Email`,`alw_eml`,`profile`,`state`,`pmt_grp`,`reg_date`,`log_date`,`ipLocate`,`fieldList`,`role`) values (123,'lettle','123321','123',0,NULL,0,0,'2024-02-24 12:36:58',NULL,NULL,NULL,'stu');
 
 /*Table structure for table `wall_article` */
 
@@ -96,9 +102,11 @@ CREATE TABLE `wall_article` (
   `article_text` tinytext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT '内容',
   `article_state` int(11) DEFAULT NULL COMMENT 'pass/auditting/failed',
   PRIMARY KEY (`article_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `wall_article` */
+
+insert  into `wall_article`(`article_id`,`article_uid`,`article_text`,`article_state`) values (1,2021117403,'我发表了第一篇文章！',2);
 
 /*Table structure for table `wall_comment` */
 

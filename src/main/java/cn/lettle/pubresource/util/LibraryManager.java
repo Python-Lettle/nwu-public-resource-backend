@@ -16,8 +16,8 @@ public class LibraryManager {
     /** 二维数组: 楼层 座位号 **/
     private int [][] seats = {
             new int[10],
-            new int[40],
-            new int[20]
+            new int[5],
+            new int[9]
     };
     /** 楼层数 **/
     private final int floor_num = 3;
