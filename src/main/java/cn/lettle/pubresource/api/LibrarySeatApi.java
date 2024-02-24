@@ -62,7 +62,7 @@ public class LibrarySeatApi {
             }
         }
 
-        if (libraryManager.checkSeatOccupied(floor, pos) && havSeat) {
+        if (havSeat || libraryManager.checkSeatOccupied(floor, pos)) {
             return Message.occupyFail();
         }
 
