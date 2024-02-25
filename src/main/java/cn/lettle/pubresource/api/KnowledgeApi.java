@@ -61,9 +61,14 @@ public class KnowledgeApi {
         /** 获取参数 **/
         int uid = body_json.getIntValue("uid");
         User user = userMapper.selectById(uid);
-        if (user.getState() >= UserState.STUDENT) {
+        if (user != null) {
             QueryWrapper wrapper = new QueryWrapper();
             List<Knowledge> knowledgeList = knowledgeMapper.selectList(wrapper);
+            if (user.getState() <= UserState.STUDENT) {
+                for (int i=0; i<knowledgeList.size(); i++) {
+                    knowledgeList.get(i).setHigh_text("");
+                }
+            }
             return JSON.toJSONString(knowledgeList);
         }
         return Message.examineFail();
