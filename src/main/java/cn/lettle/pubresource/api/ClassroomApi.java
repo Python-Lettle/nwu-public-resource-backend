@@ -2,9 +2,12 @@ package cn.lettle.pubresource.api;
 
 import cn.lettle.pubresource.entity.Classroom;
 import cn.lettle.pubresource.entity.Message;
+import cn.lettle.pubresource.entity.User;
 import cn.lettle.pubresource.mapper.ClassroomMapper;
+import cn.lettle.pubresource.mapper.UserMapper;
 import cn.lettle.pubresource.util.ClassroomManager;
 import cn.lettle.pubresource.util.ClassroomState;
+import cn.lettle.pubresource.util.UserState;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Mapper;
@@ -22,7 +25,7 @@ import java.util.Map;
 public class ClassroomApi {
     @Autowired
     private ClassroomMapper classroomMapper;
-
+    private UserMapper userMapper;
     private static final ClassroomManager classroomManager = ClassroomManager.getInstance();
 
     /**
@@ -35,8 +38,9 @@ public class ClassroomApi {
         int classroom = body_json.getIntValue("classroom");
         int uid = body_json.getIntValue("uid");
 
+        User user = userMapper.selectById(uid);
         Classroom classroom1 = classroomManager.occupy(building, floor, classroom, uid);
-        if (classroom1 != null) {
+        if (classroom1 != null  && user != null && user.getState() >= UserState.SUPER) {
             classroomMapper.insert(classroom1);
             return Message.occupySuccess();
         }
@@ -65,6 +69,7 @@ public class ClassroomApi {
         /** 获取参数 **/
         int request_id = body_json.getIntValue("request_id");
         int state = body_json.getIntValue("state");
+
         /** 判断 state 为成功或失败的一种 **/
         if (state == ClassroomState.PASS || state == ClassroomState.FAIL) {
             // 获取库中的信息
