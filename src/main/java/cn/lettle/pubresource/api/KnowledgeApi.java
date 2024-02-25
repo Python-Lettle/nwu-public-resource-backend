@@ -5,13 +5,17 @@ import cn.lettle.pubresource.entity.Message;
 import cn.lettle.pubresource.entity.User;
 import cn.lettle.pubresource.mapper.KnowledgeMapper;
 import cn.lettle.pubresource.mapper.UserMapper;
+import cn.lettle.pubresource.util.UserState;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -50,18 +54,19 @@ public class KnowledgeApi {
      * @param body_json
      * @return
      */
-    @GetMapping("/detail")
+    @PostMapping("/detail")
     public String retail_klg(@RequestBody JSONObject body_json)
     {
         // TODO: 检查用户登录状态
         /** 获取参数 **/
-        Integer k_id = body_json.getIntValue("id");          // 课程代号
-        Knowledge knowledge = knowledgeMapper.selectById(k_id);
-        /** 获取权限对应课程资料 **/
-        if(secret(body_json).equals("success"))
-            return JSON.toJSONString(knowledge.getHigh_text()) + JSON.toJSONString(knowledge.getLow_text());
-        else
-            return JSON.toJSONString(knowledge.getLow_text());
+        int uid = body_json.getIntValue("uid");
+        User user = userMapper.selectById(uid);
+        if (user.getState() >= UserState.STUDENT) {
+            QueryWrapper wrapper = new QueryWrapper();
+            List<Knowledge> knowledgeList = knowledgeMapper.selectList(wrapper);
+            return JSON.toJSONString(knowledgeList);
+        }
+        return Message.examineFail();
     }
 
     /**

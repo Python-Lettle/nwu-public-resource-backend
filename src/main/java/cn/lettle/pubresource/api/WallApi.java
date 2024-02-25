@@ -1,8 +1,10 @@
 package cn.lettle.pubresource.api;
 
 import cn.lettle.pubresource.entity.Message;
+import cn.lettle.pubresource.entity.User;
 import cn.lettle.pubresource.entity.WallComment;
 import cn.lettle.pubresource.entity.WallArticle;
+import cn.lettle.pubresource.mapper.UserMapper;
 import cn.lettle.pubresource.mapper.WallCommentMapper;
 import cn.lettle.pubresource.mapper.WallArticleMapper;
 import cn.lettle.pubresource.util.WallArticleState;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -21,10 +24,13 @@ import java.util.List;
 @RestController
 public class WallApi {
     @Autowired
-    public WallArticleMapper wallArticleMapper;
+    private WallArticleMapper wallArticleMapper;
 
     @Autowired
-    public WallCommentMapper wallCommentMapper;
+    private WallCommentMapper wallCommentMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     /**
      * 发表文章
@@ -38,15 +44,21 @@ public class WallApi {
         Integer uid = body_json.getIntValue("uid");        // 发布者id
         String text = body_json.getString("text");      // 发布内容
 
-        /** 发表文章 **/
-        WallArticle article = new WallArticle();
-        article.setArticle_uid(uid);
-        article.setArticle_text(text);
-        article.setArticle_state(WallArticleState.AUDITTING);
-        wallArticleMapper.insert(article);
+        User user = userMapper.selectById(uid);
+        if (user != null) {
+            /** 发表文章 **/
+            WallArticle article = new WallArticle();
+            article.setArticle_uid(uid);
+            article.setArticle_text(text);
+            article.setArticle_state(WallArticleState.AUDITTING);
+            article.setArticle_username(user.getName());
+            article.setPublish_time(new Date());
+            wallArticleMapper.insert(article);
 
-        log.info(String.format("%s 发表一篇文章", uid));
-        return Message.publishSuccess();
+            log.info(String.format("%s 发表一篇文章", uid));
+            return Message.publishSuccess();
+        }
+        return Message.publishFail();
     }
 
     @PostMapping("/publish_comment")
@@ -101,12 +113,13 @@ public class WallApi {
      * @param body_json
      * @return
      */
-    @GetMapping("/getArticle")
+    @PostMapping("/getArticle")
     public String getArticle(@RequestBody JSONObject body_json){
         /** 获取参数 **/
         Integer num = body_json.getIntValue("num");        // 获取 num 篇文章
         /** 构建 wrapper 获取最后num篇文章 **/
         QueryWrapper<WallArticle> wrapper = new QueryWrapper<>();       // new wrapper 对象
+        wrapper.eq("article_state", WallArticleState.PASS);
         wrapper.last(String.format("limit %d", num));                   // wrapper.last() 和 limit num 限制查询最后 num 条
         List<WallArticle> articles = wallArticleMapper.selectList(wrapper);
 

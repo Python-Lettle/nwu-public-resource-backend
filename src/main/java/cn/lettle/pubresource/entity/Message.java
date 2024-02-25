@@ -49,7 +49,7 @@ public class Message<T>
     public static String changeFail() {return JSON.toJSONString(new Message<>("change","fail"));}
     public static String getArticles(List<WallArticle> articles) {
         return JSON.toJSONString(
-                new Message<>("articles", JSON.toJSONString(articles))
+                new Message<>("articles", articles)
         );
     }
 }
