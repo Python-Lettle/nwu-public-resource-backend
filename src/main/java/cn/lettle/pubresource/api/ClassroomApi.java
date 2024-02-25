@@ -25,6 +25,7 @@ import java.util.Map;
 public class ClassroomApi {
     @Autowired
     private ClassroomMapper classroomMapper;
+    @Autowired
     private UserMapper userMapper;
     private static final ClassroomManager classroomManager = ClassroomManager.getInstance();
 
